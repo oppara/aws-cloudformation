@@ -213,23 +213,62 @@ Resources:
 Outputs:
   VPC:
     Value: !Ref VPC
+    Export:
+      Name: !Sub ${ProjectName}-vpc
   VPCCidr:
     Value: !Ref VPCCidr
+    Export:
+      Name: !Sub ${ProjectName}-vpc-cidr
 
   PublicSubnetA:
     Value: !Ref PublicSubnetA
+    Export:
+      Name: !Sub ${ProjectName}-public-subnet-a
   PublicSubnetACidr:
     Value: !Ref PublicSubnetACidr
+    Export:
+      Name: !Sub ${ProjectName}-public-subnet-a-cidr
+  PublicRouteTableA:
+    Value: !Ref PublicRouteTableA
+    Export:
+      Name: !Sub ${ProjectName}-public-route-a
+
   PublicSubnetC:
     Value: !Ref PublicSubnetC
+    Export:
+      Name: !Sub ${ProjectName}-public-subnet-c
   PublicSubnetCCidr:
     Value: !Ref PublicSubnetCCidr
+    Export:
+      Name: !Sub ${ProjectName}-public-subnet-cidr
+  PublicRouteTableC:
+    Value: !Ref PublicRouteTableC
+    Export:
+      Name: !Sub ${ProjectName}-public-route-c
+
   PrivateSubnetA:
     Value: !Ref PrivateSubnetA
+    Export:
+      Name: !Sub ${ProjectName}-private-subnet-a
   PrivateSubnetACidr:
     Value: !Ref PrivateSubnetACidr
+    Export:
+      Name: !Sub ${ProjectName}-private-subnet-a-cidr
+  PrivateRouteTableA:
+    Value: !Ref PrivateRouteTableA
+    Export:
+      Name: !Sub ${ProjectName}-private-route-a
+
   PrivateSubnetC:
     Value: !Ref PrivateSubnetC
+    Export:
+      Name: !Sub ${ProjectName}-private-subnet-c
   PrivateSubnetCCidr:
     Value: !Ref PrivateSubnetCCidr
+    Export:
+      Name: !Sub ${ProjectName}-private-subnet-c-cidr
+  PrivateRouteTableC:
+    Value: !Ref PrivateRouteTableC
+    Export:
+      Name: !Sub ${ProjectName}-private-route-c
 
