@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description:
+  Create S3 Endpoint
+
+#---------------------------------------------------------------------------
+Metadata:
+#---------------------------------------------------------------------------
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Parameters:
+          - SystemName
+
+#---------------------------------------------------------------------------
+Parameters:
+#---------------------------------------------------------------------------
+  SystemName:
+    Description: Resource Prefix. e.g. example, example-dev, example-stg, example-prd
+    Type: String
+    MinLength: 1
+    Default: example
+
+#---------------------------------------------------------------------------
+Resources:
+#---------------------------------------------------------------------------
+
+  #---------------------------------------------------------------------------
+  VPCS3Endpoint:
+  #---------------------------------------------------------------------------
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      RouteTableIds:
+        - Fn::ImportValue: !Sub '${SystemName}-application-rtb-1'
+        - Fn::ImportValue: !Sub '${SystemName}-application-rtb-2'
+        - Fn::ImportValue: !Sub '${SystemName}-application-rtb-3'
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
+      VpcId:
+        Fn::ImportValue: !Sub '${SystemName}-vpc'
+
+#---------------------------------------------------------------------------
+Outputs:
+#---------------------------------------------------------------------------
+  VPCS3Endpoint:
+    Value: !Ref VPCS3Endpoint
+    Export:
+      Name: !Sub '${SystemName}-vpc-s3-endpoint'
