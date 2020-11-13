@@ -536,3 +536,9 @@ Outputs:
     Value: !Ref DataStoreRouteTable
     Export:
       Name: !Sub ${SystemName}-datastore-rtb
+
+  NatGatewayEIP:
+    Condition: EnableNatGateway
+    Value: !Ref NatGatewayEIP
+    Export:
+      Name: !Sub ${SystemName}-ngw-eip
