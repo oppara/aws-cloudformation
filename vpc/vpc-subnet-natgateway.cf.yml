@@ -468,6 +468,11 @@ Resources:
     Condition: EnableNatGateway
     Properties:
       Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Sub ${SystemName}-ngw-eip
+        - Key: SystemName
+          Value: !Sub ${SystemName}
 
 #---------------------------------------------------------------------------
 Outputs:
