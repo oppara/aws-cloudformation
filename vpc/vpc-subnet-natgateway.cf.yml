@@ -70,6 +70,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-vpc
+        - Key: SystemName
+          Value: !Sub ${SystemName}
 
   #---------------------------------------------------------------------------
   InternetGateway:
@@ -79,6 +81,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-igw
+        - Key: SystemName
+          Value: !Sub ${SystemName}
 
   InternetGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -94,6 +98,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-nacl
+        - Key: SystemName
+          Value: !Sub ${SystemName}
       VpcId: !Ref Vpc
 
   NetworkACLEntryEgress:
@@ -125,6 +131,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-public-rtb
+        - Key: SystemName
+          Value: !Sub ${SystemName}
   PublicRoute:
     Type: AWS::EC2::Route
     Properties:
@@ -143,6 +151,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-public-subnet-1
+        - Key: SystemName
+          Value: !Sub ${SystemName}
       VpcId: !Ref Vpc
 
   PublicSubnet1RouteTableAssociation:
@@ -168,6 +178,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-public-subnet-2
+        - Key: SystemName
+          Value: !Sub ${SystemName}
       VpcId: !Ref Vpc
 
   PublicSubnet2RouteTableAssociation:
@@ -193,6 +205,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-public-subnet-3
+        - Key: SystemName
+          Value: !Sub ${SystemName}
       VpcId: !Ref Vpc
 
   PublicSubnet3RouteTableAssociation:
@@ -216,6 +230,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-application-rtb-1
+        - Key: SystemName
+          Value: !Sub ${SystemName}
 
   ApplicationRoute1:
     Type: AWS::EC2::Route
@@ -235,6 +251,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-application-subnet-1
+        - Key: SystemName
+          Value: !Sub ${SystemName}
       VpcId: !Ref Vpc
 
   ApplicationSubnet1RouteTableAssociation:
@@ -258,6 +276,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-application-rtb-2
+        - Key: SystemName
+          Value: !Sub ${SystemName}
 
   ApplicationRoute2:
     Type: AWS::EC2::Route
@@ -277,6 +297,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-application-subnet-2
+        - Key: SystemName
+          Value: !Sub ${SystemName}
       VpcId: !Ref Vpc
 
   ApplicationSubnet2RouteTableAssociation:
@@ -300,6 +322,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-application-rtb-3
+        - Key: SystemName
+          Value: !Sub ${SystemName}
 
   ApplicationRoute3:
     Type: AWS::EC2::Route
@@ -319,6 +343,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-application-subnet-3
+        - Key: SystemName
+          Value: !Sub ${SystemName}
       VpcId: !Ref Vpc
 
   ApplicationSubnet3RouteTableAssociation:
@@ -342,6 +368,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-datastore-rtb
+        - Key: SystemName
+          Value: !Sub ${SystemName}
 
   #---------------------------------------------------------------------------
   DataStoreSubnet1:
@@ -353,6 +381,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-datastore-subnet-1
+        - Key: SystemName
+          Value: !Sub ${SystemName}
       VpcId: !Ref Vpc
 
   DataStoreSubnet1RouteTableAssociation:
@@ -377,6 +407,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-datastore-subnet-2
+        - Key: SystemName
+          Value: !Sub ${SystemName}
       VpcId: !Ref Vpc
 
   DataStoreSubnet2RouteTableAssociation:
@@ -401,6 +433,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-datastore-subnet-3
+        - Key: SystemName
+          Value: !Sub ${SystemName}
       VpcId: !Ref Vpc
 
   DataStoreSubnet3RouteTableAssociation:
@@ -426,6 +460,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-ngw
+        - Key: SystemName
+          Value: !Sub ${SystemName}
 
   NatGatewayEIP:
     Type: AWS::EC2::EIP
