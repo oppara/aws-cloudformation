@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description:
+  Enable SecurityHub
+
+#---------------------------------------------------------------------------
+Metadata:
+#---------------------------------------------------------------------------
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Parameters:
+          - SystemName
+
+#---------------------------------------------------------------------------
+Parameters:
+#---------------------------------------------------------------------------
+  SystemName:
+    Description: Resource Prefix. e.g. example, example-dev, example-stg, example-prd
+    Type: String
+    MinLength: 1
+    Default: example
+
+#---------------------------------------------------------------------------
+Resources:
+#---------------------------------------------------------------------------
+
+  #---------------------------------------------------------------------------
+  SecurityHub:
+  #---------------------------------------------------------------------------
+    Type: AWS::SecurityHub::Hub
+    Properties:
+      Tags:
+        Name: !Sub ${SystemName}-securityhub
+        SystemName: !Sub ${SystemName}
+
+#---------------------------------------------------------------------------
+Outputs:
+#---------------------------------------------------------------------------
+  SecurityHub:
+    Value: !Ref SecurityHub
+    Export:
+      Name: !Sub '${SystemName}-securityhub'
