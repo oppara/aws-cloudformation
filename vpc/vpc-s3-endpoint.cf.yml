@@ -35,6 +35,13 @@ Resources:
       ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
       VpcId:
         Fn::ImportValue: !Sub '${SystemName}-vpc'
+      # tags not yet supported
+      # https://github.com/aws-cloudformation/aws-cloudformation-coverage-roadmap/issues/196
+      # Tags:
+        # - Key: Name
+          # Value: !Sub ${SystemName}-vpc-endpoint
+        # - Key: SystemName
+          # Value: !Sub ${SystemName}
 
 #---------------------------------------------------------------------------
 Outputs:
