@@ -9,15 +9,21 @@ Metadata:
     ParameterGroups:
       - Parameters:
           - SystemName
+          - Env
 
 #---------------------------------------------------------------------------
 Parameters:
 #---------------------------------------------------------------------------
   SystemName:
-    Description: Resource Prefix. e.g. example, example-dev, example-stg, example-prd
+    Description: System identifier
     Type: String
     MinLength: 1
     Default: example
+  Env:
+    Description: Environment name. e.g. prod, stg, dev
+    Type: String
+    MinLength: 1
+    Default: prod
 
 #---------------------------------------------------------------------------
 Resources:
@@ -29,19 +35,21 @@ Resources:
     Type: AWS::EC2::VPCEndpoint
     Properties:
       RouteTableIds:
-        - Fn::ImportValue: !Sub '${SystemName}-application-rtb-1'
-        - Fn::ImportValue: !Sub '${SystemName}-application-rtb-2'
-        - Fn::ImportValue: !Sub '${SystemName}-application-rtb-3'
+        - Fn::ImportValue: !Sub '${SystemName}-${Env}-application-rtb-1'
+        - Fn::ImportValue: !Sub '${SystemName}-${Env}-application-rtb-2'
+        - Fn::ImportValue: !Sub '${SystemName}-${Env}-application-rtb-3'
       ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
       VpcId:
-        Fn::ImportValue: !Sub '${SystemName}-vpc'
+        Fn::ImportValue: !Sub '${SystemName}-${Env}-vpc'
       # tags not yet supported
       # https://github.com/aws-cloudformation/aws-cloudformation-coverage-roadmap/issues/196
       # Tags:
         # - Key: Name
-          # Value: !Sub ${SystemName}-vpc-endpoint
+          # Value: !Sub ${SystemName}-${Env}-vpc-endpoint
         # - Key: SystemName
           # Value: !Sub ${SystemName}
+        # - Key: Env
+          # Value: !Sub ${Env}
 
 #---------------------------------------------------------------------------
 Outputs:
@@ -49,4 +57,4 @@ Outputs:
   VPCS3Endpoint:
     Value: !Ref VPCS3Endpoint
     Export:
-      Name: !Sub '${SystemName}-vpc-s3-endpoint'
+      Name: !Sub '${SystemName}-${Env}-vpc-s3-endpoint'
