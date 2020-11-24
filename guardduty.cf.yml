@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description:
+  Enable GuardDuty and create SNS Subscription
+
+#---------------------------------------------------------------------------
+Metadata:
+#---------------------------------------------------------------------------
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Parameters:
+          - SystemName
+          - Email
+
+#---------------------------------------------------------------------------
+Parameters:
+#---------------------------------------------------------------------------
+  SystemName:
+    Description: System identifier
+    Type: String
+    MinLength: 1
+    Default: example
+  Email:
+    Description: Enter email address to send notification.
+    Type: String
+
+#---------------------------------------------------------------------------
+Resources:
+#---------------------------------------------------------------------------
+
+  #---------------------------------------------------------------------------
+  MyGuardDuty:
+  #---------------------------------------------------------------------------
+    Type: "AWS::GuardDuty::Detector"
+    Properties:
+      Enable: true
+
+  #---------------------------------------------------------------------------
+  MySNSTopic:
+  #---------------------------------------------------------------------------
+    Type: "AWS::SNS::Topic"
+    Properties:
+      TopicName: GuardDutyTopic
+      Tags:
+        - Key: SystemName
+          Value: !Sub ${SystemName}
+
+  #---------------------------------------------------------------------------
+  MySNSSubscription:
+  #---------------------------------------------------------------------------
+    Type: "AWS::SNS::Subscription"
+    Properties:
+      Endpoint: !Ref Email
+      Protocol: email
+      TopicArn: !Ref MySNSTopic
+
+  #---------------------------------------------------------------------------
+  MyMySNSTopicopickPolicy:
+  #---------------------------------------------------------------------------
+    Type: "AWS::SNS::TopicPolicy"
+    Properties:
+      PolicyDocument:
+        Id: default_policy_ID
+        Version: "2012-10-17"
+        Statement:
+        - Sid: default_statement_ID
+          Effect: Allow
+          Principal:
+            AWS: "*"
+          Action:
+            - "SNS:GetTopicAttributes"
+            - "SNS:SetTopicAttributes"
+            - "SNS:AddPermission"
+            - "SNS:RemovePermission"
+            - "SNS:DeleteTopic"
+            - "SNS:Subscribe"
+            - "SNS:ListSubscriptionsByTopic"
+            - "SNS:Publish"
+            - "SNS:Receive"
+          Resource: !Ref MySNSTopic
+          Condition:
+            StringEquals:
+              "AWS:SourceOwner": !Ref "AWS::AccountId"
+        - Sid: AWSEvents_AlertGuardDutyFindings_Id123
+          Effect: Allow
+          Principal:
+            Service:
+            - "events.amazonaws.com"
+          Action: "sns:Publish"
+          Resource: !Ref MySNSTopic
+      Topics:
+      - !Ref MySNSTopic
+  #---------------------------------------------------------------------------
+  MyEventsRule:
+  #---------------------------------------------------------------------------
+    Type: "AWS::Events::Rule"
+    Properties:
+      Name: AlertGuardDutyFindings
+      Description: "Alert to SNS topic when find threats by GuardDuty"
+      EventPattern: {
+                      "source": [
+                        "aws.guardduty"
+                      ],
+                      "detail-type": [
+                        "GuardDuty Finding"
+                      ]
+                    }
+      Targets:
+        - Arn: !Ref MySNSTopic
+          Id: Id123
