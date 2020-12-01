@@ -247,7 +247,7 @@ Resources:
     Properties:
       RouteTableId: !Ref ApplicationRouteTable1
       DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway
+      NatGatewayId: !Ref NatGateway1
 
   #---------------------------------------------------------------------------
   ApplicationSubnet1:
@@ -293,7 +293,7 @@ Resources:
     Properties:
       RouteTableId: !Ref ApplicationRouteTable2
       DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway
+      NatGatewayId: !Ref NatGateway2
 
   #---------------------------------------------------------------------------
   ApplicationSubnet2:
@@ -339,7 +339,7 @@ Resources:
     Properties:
       RouteTableId: !Ref ApplicationRouteTable3
       DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway
+      NatGatewayId: !Ref NatGateway3
 
   #---------------------------------------------------------------------------
   ApplicationSubnet3:
@@ -458,27 +458,77 @@ Resources:
       NetworkAclId: !Ref NetworkACL
 
   #------------------------------------------------------------------------------
-  NatGateway:
+  NatGateway1:
   #------------------------------------------------------------------------------
     Type: AWS::EC2::NatGateway
     Condition: EnableNatGateway
     Properties:
-      AllocationId: !GetAtt NatGatewayEIP.AllocationId
+      AllocationId: !GetAtt NatGatewayEIP1.AllocationId
       SubnetId: !Ref PublicSubnet1
       Tags:
         - Key: Name
-          Value: !Sub ${SystemName}-${Env}-ngw
+          Value: !Sub ${SystemName}-${Env}-ngw-1
         - Key: SystemName
           Value: !Sub ${SystemName}
 
-  NatGatewayEIP:
+  NatGatewayEIP1:
     Type: AWS::EC2::EIP
     Condition: EnableNatGateway
     Properties:
       Domain: vpc
       Tags:
         - Key: Name
-          Value: !Sub ${SystemName}-${Env}-ngw-eip
+          Value: !Sub ${SystemName}-${Env}-ngw-eip-1
+        - Key: SystemName
+          Value: !Sub ${SystemName}
+
+  #------------------------------------------------------------------------------
+  NatGateway2:
+  #------------------------------------------------------------------------------
+    Type: AWS::EC2::NatGateway
+    Condition: EnableNatGateway
+    Properties:
+      AllocationId: !GetAtt NatGatewayEIP2.AllocationId
+      SubnetId: !Ref PublicSubnet2
+      Tags:
+        - Key: Name
+          Value: !Sub ${SystemName}-${Env}-ngw-2
+        - Key: SystemName
+          Value: !Sub ${SystemName}
+
+  NatGatewayEIP2:
+    Type: AWS::EC2::EIP
+    Condition: EnableNatGateway
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Sub ${SystemName}-${Env}-ngw-eip-2
+        - Key: SystemName
+          Value: !Sub ${SystemName}
+
+  #------------------------------------------------------------------------------
+  NatGateway3:
+  #------------------------------------------------------------------------------
+    Type: AWS::EC2::NatGateway
+    Condition: EnableNatGateway
+    Properties:
+      AllocationId: !GetAtt NatGatewayEIP3.AllocationId
+      SubnetId: !Ref PublicSubnet3
+      Tags:
+        - Key: Name
+          Value: !Sub ${SystemName}-${Env}-ngw-3
+        - Key: SystemName
+          Value: !Sub ${SystemName}
+
+  NatGatewayEIP3:
+    Type: AWS::EC2::EIP
+    Condition: EnableNatGateway
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Sub ${SystemName}-${Env}-ngw-eip-3
         - Key: SystemName
           Value: !Sub ${SystemName}
 
@@ -550,8 +600,18 @@ Outputs:
     Export:
       Name: !Sub ${SystemName}-${Env}-datastore-rtb
 
-  NatGatewayEIP:
+  NatGatewayEIP1:
     Condition: EnableNatGateway
-    Value: !Ref NatGatewayEIP
+    Value: !Ref NatGatewayEIP1
     Export:
-      Name: !Sub ${SystemName}-${Env}-ngw-eip
+      Name: !Sub ${SystemName}-${Env}-ngw-eip-1
+  NatGatewayEIP2:
+    Condition: EnableNatGateway
+    Value: !Ref NatGatewayEIP2
+    Export:
+      Name: !Sub ${SystemName}-${Env}-ngw-eip-2
+  NatGatewayEIP3:
+    Condition: EnableNatGateway
+    Value: !Ref NatGatewayEIP3
+    Export:
+      Name: !Sub ${SystemName}-${Env}-ngw-eip-3
