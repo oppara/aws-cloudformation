@@ -54,7 +54,7 @@ Resources:
       TopicArn: !Ref MySNSTopic
 
   #---------------------------------------------------------------------------
-  MyMySNSTopicopickPolicy:
+  MySNSTopicPolicy:
   #---------------------------------------------------------------------------
     Type: "AWS::SNS::TopicPolicy"
     Properties:
@@ -97,13 +97,13 @@ Resources:
       Name: AlertGuardDutyFindings
       Description: "Alert to SNS topic when find threats by GuardDuty"
       EventPattern: {
-                      "source": [
-                        "aws.guardduty"
-                      ],
-                      "detail-type": [
-                        "GuardDuty Finding"
-                      ]
-                    }
+        "source": [
+          "aws.guardduty"
+        ],
+        "detail-type": [
+          "GuardDuty Finding"
+        ]
+      }
       Targets:
         - Arn: !Ref MySNSTopic
           Id: Id123
