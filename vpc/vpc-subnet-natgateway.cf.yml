@@ -263,11 +263,23 @@ Resources:
           Value: !Sub ${SystemName}
       VpcId: !Ref Vpc
 
-  ApplicationSubnet1RouteTableAssociation:
+  ApplicationSubnet1RouteTableAssociation11:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref ApplicationSubnet1
       RouteTableId: !Ref ApplicationRouteTable1
+
+  ApplicationSubnet1RouteTableAssociation12:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref ApplicationSubnet1
+      RouteTableId: !Ref ApplicationRouteTable2
+
+  # ApplicationSubnet1RouteTableAssociation13:
+    # Type: AWS::EC2::SubnetRouteTableAssociation
+    # Properties:
+      # SubnetId: !Ref ApplicationSubnet1
+      # RouteTableId: !Ref ApplicationRouteTable3
 
   ApplicationSubnet1NetworkAclAssociation:
     Type: AWS::EC2::SubnetNetworkAclAssociation
@@ -309,11 +321,23 @@ Resources:
           Value: !Sub ${SystemName}
       VpcId: !Ref Vpc
 
-  ApplicationSubnet2RouteTableAssociation:
+  ApplicationSubnet2RouteTableAssociation21:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref ApplicationSubnet2
       RouteTableId: !Ref ApplicationRouteTable2
+
+  # ApplicationSubnet2RouteTableAssociation22:
+    # Type: AWS::EC2::SubnetRouteTableAssociation
+    # Properties:
+      # SubnetId: !Ref ApplicationSubnet2
+      # RouteTableId: !Ref ApplicationRouteTable2
+
+  # ApplicationSubnet2RouteTableAssociation23:
+    # Type: AWS::EC2::SubnetRouteTableAssociation
+    # Properties:
+      # SubnetId: !Ref ApplicationSubnet3
+      # RouteTableId: !Ref ApplicationRouteTable2
 
   ApplicationSubnet2NetworkAclAssociation:
     Type: AWS::EC2::SubnetNetworkAclAssociation
@@ -355,11 +379,23 @@ Resources:
           Value: !Sub ${SystemName}
       VpcId: !Ref Vpc
 
-  ApplicationSubnet3RouteTableAssociation:
+  ApplicationSubnet3RouteTableAssociation31:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref ApplicationSubnet3
       RouteTableId: !Ref ApplicationRouteTable3
+
+  # ApplicationSubnet3RouteTableAssociation32:
+    # Type: AWS::EC2::SubnetRouteTableAssociation
+    # Properties:
+      # SubnetId: !Ref ApplicationSubnet2
+      # RouteTableId: !Ref ApplicationRouteTable3
+
+  # ApplicationSubnet3RouteTableAssociation33:
+    # Type: AWS::EC2::SubnetRouteTableAssociation
+    # Properties:
+      # SubnetId: !Ref ApplicationSubnet3
+      # RouteTableId: !Ref ApplicationRouteTable3
 
   ApplicationSubnet3NetworkAclAssociation:
     Type: AWS::EC2::SubnetNetworkAclAssociation
