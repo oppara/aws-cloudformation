@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: S3 for Logs
+
+#---------------------------------------------------------------------------
+Metadata:
+#---------------------------------------------------------------------------
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Parameters:
+          - SystemName
+          - BucketName
+          - LogsExpirationInDays
+          - LogsTransitionInDays
+          - LogsTransitionStrageClass
+
+    ParameterLabels:
+      SystemName:
+        default: "System Name"
+      BucketName:
+        default: "Bucket Name"
+      LogsExpirationInDays:
+        default: "Expiration in Days"
+      LogsTransitionInDays:
+        default: "Transition in Days"
+      LogsTransitionStrageClass:
+        default: "Transition Strage Class"
+
+#---------------------------------------------------------------------------
+Parameters:
+#---------------------------------------------------------------------------
+  SystemName:
+    Description: System identifier
+    Type: String
+    MinLength: '1'
+    Default: example
+  BucketName:
+    Type: String
+  LogsExpirationInDays:
+    Description: The number of days before an object is deleted
+    Type: Number
+    Default: 365
+  LogsTransitionInDays:
+    Description: The number of days it takes for an object to migrate
+    Type: Number
+    Default: 30
+  LogsTransitionStrageClass:
+    Description: Storage class to which objects are migrated
+    Type: String
+    Default: "INTELLIGENT_TIERING"
+    AllowedValues:
+      - "INTELLIGENT_TIERING"
+      - "STANDARD_IA"
+      - "ONEZONE_IA"
+      - "GLACIER"
+      - "DEEP_ARCHIVE"
+
+#---------------------------------------------------------------------------
+Resources:
+#---------------------------------------------------------------------------
+  S3BucketLogs:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: LogDeliveryWrite
+      BucketName: !Sub '${BucketName}'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - Id: AutoDelete
+            Status: Enabled
+            ExpirationInDays: !Ref LogsExpirationInDays
+            Transitions:
+              - TransitionInDays: !Ref LogsTransitionInDays
+                StorageClass: !Ref LogsTransitionStrageClass
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: SystemName
+          Value: !Sub '${SystemName}'
+
+#---------------------------------------------------------------------------
+Outputs:
+#---------------------------------------------------------------------------
+  S3BucketLogsName:
+    Value: !Ref S3BucketLogs
+    Export:
+      Name: !Sub ${AWS::StackName}--s3-backet-logs

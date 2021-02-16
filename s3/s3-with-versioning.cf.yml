@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description:
+  S3 with Versioning
+
+#---------------------------------------------------------------------------
+Metadata:
+#---------------------------------------------------------------------------
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Parameters:
+          - SystemName
+          - BucketName
+          - ExpirationInDays
+
+    ParameterLabels:
+      SystemName:
+        default: "System Name"
+      BucketName:
+        default: "Bucket Name"
+      ExpirationInDays:
+        default: "Expiration in Days"
+
+#---------------------------------------------------------------------------
+Parameters:
+#---------------------------------------------------------------------------
+  SystemName:
+    Description: System identifier
+    Type: String
+    MinLength: "1"
+    Default: example
+
+  BucketName:
+    Description: (Required)
+    Type: String
+
+  ExpirationInDays:
+    Description: specifies the time, in days, between when a new version of the object is uploaded to the bucket and when old versions of the object expire.
+    Type: Number
+    Default: "30"
+
+#---------------------------------------------------------------------------
+Resources:
+#---------------------------------------------------------------------------
+
+  #---------------------------------------------------------------------------
+  # S3
+  #---------------------------------------------------------------------------
+  S3Bucket:
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Ref BucketName
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Id: NoncurrentVersionExpiration
+            Status: Enabled
+            NoncurrentVersionExpirationInDays: !Ref ExpirationInDays
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: SystemName
+          Value: !Sub ${SystemName}
+
+
+#---------------------------------------------------------------------------
+Outputs:
+#---------------------------------------------------------------------------
+  S3BucketName:
+    Value: !Ref S3Bucket
+    Export:
+      Name: !Sub ${AWS::StackName}--s3-backet-with-versioning
