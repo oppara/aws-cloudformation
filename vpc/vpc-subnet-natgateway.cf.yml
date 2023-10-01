@@ -11,6 +11,7 @@ Metadata:
           - Env
           - VpcCidr
           - NumberOfNatGateway
+          - UseEgressOnlyInternetGateway
 
 Parameters:
   SystemName:
@@ -34,6 +35,11 @@ Parameters:
     Type: Number
     Default: 0
     AllowedValues: [0, 1, 2, 3]
+  UseEgressOnlyInternetGateway:
+    Description: Use egress-only internet gateway. No|Yes
+    Type: String
+    Default: 'No'
+    AllowedValues: ['No', 'Yes']
 
 Conditions:
   UseOneNatGateway:
@@ -42,6 +48,8 @@ Conditions:
     !Equals [2, !Ref NumberOfNatGateway]
   UseThreeNatGateways:
     !Equals [3, !Ref NumberOfNatGateway]
+  UseEgressOnlyInternetGateway:
+    !Equals ['Yes', !Ref UseEgressOnlyInternetGateway]
 
 Mappings:
   CidrConfig:
@@ -73,6 +81,11 @@ Resources:
           Value: !Sub ${SystemName}
         - Key: Env
           Value: !Sub ${Env}
+  VpcCiderBlockIPv6:
+    Type: AWS::EC2::VPCCidrBlock
+    Properties:
+      AmazonProvidedIpv6CidrBlock: true
+      VpcId: !Ref Vpc
 
 
   InternetGateway:
@@ -136,11 +149,18 @@ Resources:
       GatewayId: !Ref InternetGateway
 
   PublicSubnet1:
+    DependsOn: VpcCiderBlockIPv6
     Type: AWS::EC2::Subnet
     Properties:
+      MapPublicIpOnLaunch: true
       AvailabilityZone: !Select [0, "Fn::GetAZs": {Ref: "AWS::Region"}]
       CidrBlock: !Sub ["${VpcCidr}${Subnet}", {Subnet: !FindInMap [CidrConfig, Key, PublicSubnet1]}]
-      MapPublicIpOnLaunch: true
+      AssignIpv6AddressOnCreation: true
+      Ipv6CidrBlock:
+        Fn::Sub:
+          - "${VpcPart}${SubnetPart}"
+          - VpcPart: !Select [0, !Split ['00::/56', !Select [0, !GetAtt Vpc.Ipv6CidrBlocks]]]
+            SubnetPart: '00::/64'
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-${Env}-public-subnet-1
@@ -159,11 +179,18 @@ Resources:
       NetworkAclId: !Ref NetworkACL
 
   PublicSubnet2:
+    DependsOn: VpcCiderBlockIPv6
     Type: AWS::EC2::Subnet
     Properties:
+      MapPublicIpOnLaunch: true
       AvailabilityZone: !Select [1, "Fn::GetAZs": {Ref: "AWS::Region"}]
       CidrBlock: !Sub ["${VpcCidr}${Subnet}", {Subnet: !FindInMap [CidrConfig, Key, PublicSubnet2]}]
-      MapPublicIpOnLaunch: true
+      AssignIpv6AddressOnCreation: true
+      Ipv6CidrBlock:
+        Fn::Sub:
+          - "${VpcPart}${SubnetPart}"
+          - VpcPart: !Select [0, !Split ['00::/56', !Select [0, !GetAtt Vpc.Ipv6CidrBlocks]]]
+            SubnetPart: '01::/64'
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-${Env}-public-subnet-2
@@ -182,11 +209,18 @@ Resources:
       NetworkAclId: !Ref NetworkACL
 
   PublicSubnet3:
+    DependsOn: VpcCiderBlockIPv6
     Type: AWS::EC2::Subnet
     Properties:
+      MapPublicIpOnLaunch: true
       AvailabilityZone: !Select [2, "Fn::GetAZs": {Ref: "AWS::Region"}]
       CidrBlock: !Sub ["${VpcCidr}${Subnet}", {Subnet: !FindInMap [CidrConfig, Key, PublicSubnet3]}]
-      MapPublicIpOnLaunch: true
+      AssignIpv6AddressOnCreation: true
+      Ipv6CidrBlock:
+        Fn::Sub:
+          - "${VpcPart}${SubnetPart}"
+          - VpcPart: !Select [0, !Split ['00::/56', !Select [0, !GetAtt Vpc.Ipv6CidrBlocks]]]
+            SubnetPart: '02::/64'
       Tags:
         - Key: Name
           Value: !Sub ${SystemName}-${Env}-public-subnet-3
@@ -235,6 +269,13 @@ Resources:
       RouteTableId: !Ref ApplicationRouteTable1
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NatGateway31
+  ApplicationRoute1:
+    Type: AWS::EC2::Route
+    Condition: UseEgressOnlyInternetGateway
+    Properties:
+      RouteTableId: !Ref ApplicationRouteTable1
+      DestinationIpv6CidrBlock: ::/0
+      EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
 
   ApplicationSubnet1:
     Type: AWS::EC2::Subnet
@@ -288,6 +329,13 @@ Resources:
       RouteTableId: !Ref ApplicationRouteTable2
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NatGateway32
+  ApplicationRoute2:
+    Type: AWS::EC2::Route
+    Condition: UseEgressOnlyInternetGateway
+    Properties:
+      RouteTableId: !Ref ApplicationRouteTable2
+      DestinationIpv6CidrBlock: ::/0
+      EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
 
   ApplicationSubnet2:
     Type: AWS::EC2::Subnet
@@ -341,6 +389,13 @@ Resources:
       RouteTableId: !Ref ApplicationRouteTable3
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NatGateway33
+  ApplicationRoute3:
+    Type: AWS::EC2::Route
+    Condition: UseEgressOnlyInternetGateway
+    Properties:
+      RouteTableId: !Ref ApplicationRouteTable3
+      DestinationIpv6CidrBlock: ::/0
+      EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
 
   ApplicationSubnet3:
     Type: AWS::EC2::Subnet
@@ -578,6 +633,12 @@ Resources:
           Value: !Sub ${SystemName}-${Env}-ngw-eip-3
         - Key: SystemName
           Value: !Sub ${SystemName}
+
+  EgressOnlyInternetGateway:
+    Type: AWS::EC2::EgressOnlyInternetGateway
+    Condition: UseEgressOnlyInternetGateway
+    Properties:
+      VpcId: !Ref Vpc
 
 
 Outputs:
