@@ -1,16 +1,21 @@
 ---
-extends: default
+extends: relaxed
 
 yaml-files:
   - '*.yaml'
   - '*.yml'
-  - '.yamllint'
+  - .yamllint
 
 rules:
+  comments-indentation: disable
+  comments:
+    require-starting-space: false
   indentation:
     indent-sequences: consistent
-
   line-length: disable
+  empty-lines:
+    max: 2
+    max-start: 1
+    max-end: 1
 
-  comments:
-    min-spaces-from-content: 1
+# vi: set ft=yaml :
